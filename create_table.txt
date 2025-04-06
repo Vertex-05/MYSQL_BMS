@@ -1,0 +1,105 @@
+DROP DATABASE LibraryManagement6;
+
+-- new database
+create database LibraryManagement7;
+use LibraryManagement7;
+
+create table user(
+userID varchar(10) not null primary key,
+firstname varchar(30),
+lastname varchar(30),
+gender varchar(10),
+password varchar(30),
+DateofBirth date,
+email varchar(30),
+phone varchar(11),
+StreetNo varchar(30),
+City varchar(30),
+State varchar(30),
+userType varchar(20),
+numBorrow int,
+maxBorrow int,
+fine decimal(10, 2),
+userStatus varchar(15),
+memberStatus bool null,
+MembershipEndDate date null,
+program varchar(30) null,
+position varchar(30) null,
+department varchar(30) null);
+
+create table member_payment(
+paymentID int not null auto_increment unique,
+userID varchar(10),
+amount decimal(10, 2),
+paymentWay varchar(30),
+addDays int,
+operationTime timestamp default(current_timestamp()),
+foreign key fk_userID(userID) references user(userID)
+);
+
+create table asset(
+assetID varchar(10) not null primary key,
+assetName varchar(30),
+author varchar(30),
+publishTime year,
+assetType varchar(20),
+publisherID varchar(10),
+subjects varchar(30),
+borrowTimes int,
+locationID varchar(10) NULL,
+physicalType varchar(15) NULL,
+assetStatus varchar(15) NULL,
+ISBN varchar(30) NULL,
+totalNum int NULL,
+remainNum int NULL,
+price DECIMAL(10,2) NULL,
+digitalType varchar(15) NULL,
+URL varchar(50) NULL,
+foreign key fk_publisherID(publisherID) references publisher(publisherID),
+foreign key fk_locationID(locationID) references location(locationID)
+);
+
+create table publisher(
+publisherID varchar(10) not null primary key,
+publisherName varchar(30),
+establishedTime year,
+publishNum int, 
+publishPhone varchar(11));
+
+create table location(
+locationID varchar(10) not null primary key,
+floorID varchar(10),
+sectionID varchar(10),
+shelfID varchar(10));
+
+create table borrow(
+borrowID int not null auto_increment unique,
+userID varchar(10),
+foreign key fk_userID(userID) references user(userID),
+assetID varchar(10),
+foreign key fk_assetID(assetID) references asset(assetID),
+userType varchar(20),
+assetType varchar(20),
+dueDate timestamp, -- 截止日期
+borrowTime timestamp default (current_timestamp()), -- 如果设置为default就不再是显示，不能有任何东西动他
+returnTime timestamp null -- 实际归还日期
+);
+
+
+create table fine(
+paymentID int not null auto_increment primary key,
+borrowID int,
+foreign key fk_borrowID(borrowID) references borrow(borrowID),
+assetID varchar(10),
+userID varchar(10),
+amount decimal(10, 2) null,
+reason varchar(50),
+paymentStatus varchar(10),
+operationTime timestamp default (current_timestamp()),
+processStatus varchar(15));
+
+
+CREATE TABLE event_log (
+    log_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    message TEXT
+);
