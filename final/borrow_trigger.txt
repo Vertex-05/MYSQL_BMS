@@ -1,0 +1,107 @@
+-- borrow trigger
+
+DELIMITER //
+
+DROP TRIGGER IF EXISTS borrow_before_insert;//
+
+
+-- borrow before insert
+
+CREATE TRIGGER borrow_before_insert
+BEFORE INSERT ON borrow
+FOR EACH ROW
+BEGIN
+    
+    IF (SELECT memberStatus FROM user WHERE userID = NEW.userID) = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Non-members are not allowed to borrow assets.';
+    END IF;
+
+    IF (SELECT userStatus FROM user WHERE userID = NEW.userID) = 'unavailable' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'You have fine to pay';
+    END IF;
+    
+    IF (SELECT numBorrow FROM user WHERE userID = NEW.userID) >= (SELECT maxBorrow FROM user WHERE userID = NEW.userID) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'User has exceeded maximum borrow limit.';
+    END IF;
+    
+    SET NEW.assetType = (SELECT assetType FROM asset WHERE assetID = NEW.assetID);
+    SET NEW.userType = (SELECT userType FROM user WHERE userID = NEW.userID);
+    
+    -- physical assets
+    IF NEW.assetType = 'physical' THEN
+        IF (SELECT remainNum FROM asset WHERE assetID = NEW.assetID) = 0 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'The requested physical asset is not available for borrowing.';
+        END IF;
+
+        UPDATE asset
+		SET remainNum = remainNum - 1,
+			borrowTimes = borrowTimes + 1,
+			assetStatus = CASE 
+                    WHEN remainNum - 1 = 0 THEN 'unavailable' 
+                    ELSE assetStatus
+				END
+		WHERE assetID = NEW.assetID;
+		
+        IF NEW.userType = 'faculty' THEN
+			SET NEW.dueDate = DATE_ADD(NEW.borrowTime, INTERVAL 60 DAY);
+		ELSE
+			SET NEW.dueDate = DATE_ADD(NEW.borrowTime, INTERVAL 1 MINUTE); -- 记得改回DAY
+		END IF;
+        
+	-- digital assets
+    ELSEIF NEW.assetType = 'digital' THEN
+        SET NEW.dueDate = CURRENT_TIMESTAMP;
+        SET NEW.returnTime = CURRENT_TIMESTAMP;
+
+        UPDATE asset
+        SET borrowTimes = borrowTimes + 1
+        WHERE assetID = NEW.assetID;
+    END IF;
+
+    
+END//
+
+DROP TRIGGER IF EXISTS borrow_after_insert;//
+-- borrow after insert
+
+CREATE TRIGGER borrow_after_insert
+AFTER INSERT ON borrow
+FOR EACH ROW
+BEGIN
+    -- update user's number of borrow
+    IF NEW.assetType = 'physical' THEN
+		UPDATE user
+		SET numBorrow = numBorrow + 1
+		WHERE userID = NEW.userID;
+	END IF;
+END//
+
+
+-- borrow after update
+CREATE TRIGGER borrow_after_update
+AFTER UPDATE ON borrow
+FOR EACH ROW
+BEGIN
+	IF OLD.returnTime IS NULL AND NEW.returnTime IS NOT NULL THEN
+		UPDATE asset
+        SET
+			remainNum = remainNum + 1,
+            assetStatus = CASE
+				WHEN remainNum + 1 > 0 THEN 'available'
+                ELSE assetStatus
+			END
+		WHERE assetID = NEW.assetID;
+        
+        UPDATE user
+        SET numBorrow = numBorrow - 1
+        WHERE userID = NEW.userID;
+	END IF;
+END;
+
+
+//
+DELIMITER ;

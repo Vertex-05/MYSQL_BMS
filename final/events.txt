@@ -1,0 +1,65 @@
+-- events
+
+SET GLOBAL event_scheduler = ON;
+
+
+DELIMITER //
+
+CREATE EVENT check_membership_status
+ON SCHEDULE EVERY 1 DAY
+STARTS current_timestamp
+DO
+BEGIN
+	UPDATE user
+    SET memberStatus = 0
+    WHERE MembershipEndDate < CURRENT_DATE;
+END//
+
+
+
+DROP EVENT IF EXISTS daily_update_fines//
+
+CREATE EVENT daily_update_fines
+ON SCHEDULE EVERY 1 MINUTE
+DO
+BEGIN
+    -- log message to check whether it works
+    INSERT INTO event_log (message) VALUES ('Daily fine update executed successfully');
+
+    -- insert new fine record
+    INSERT INTO fine (borrowID, amount, reason, paymentStatus, assetID, userID)
+    SELECT 
+        b.borrowID,
+        TIMESTAMPDIFF(MINUTE, b.dueDate, CURRENT_TIMESTAMP) * 0.2 AS amount,
+        'Overduefine' AS reason,
+        'unpaid' AS paymentStatus,
+        b.assetID,
+        b.userID
+    FROM borrow b
+    WHERE 
+        b.returnTime IS NULL
+        AND b.dueDate < CURRENT_TIMESTAMP
+        AND NOT EXISTS (
+            SELECT 1 FROM fine f 
+            WHERE f.borrowID = b.borrowID AND f.reason = 'Overduefine'
+        );
+
+    -- update old fine record
+    UPDATE fine f
+    JOIN (
+        SELECT borrowID, TIMESTAMPDIFF(MINUTE, b.dueDate, CURRENT_TIMESTAMP) * 0.2 AS new_amount
+        FROM borrow b
+        WHERE b.returnTime IS NULL AND b.dueDate < CURRENT_TIMESTAMP
+    ) AS updates ON f.borrowID = updates.borrowID
+    SET f.amount = updates.new_amount,
+    f.operationTime = CURRENT_TIMESTAMP
+    WHERE f.reason = 'Overduefine'
+		AND f.paymentStatus = 'unpaid';
+
+    
+END//
+
+//
+DELIMITER ;
+
+

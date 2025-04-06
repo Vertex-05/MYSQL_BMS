@@ -1,0 +1,51 @@
+-- member_payment trigger
+
+DELIMITER //
+
+DROP TRIGGER IF EXISTS member_payment_before_insert;//
+
+-- member_payment berfore insert
+CREATE TRIGGER member_payment_before_insert
+BEFORE INSERT ON member_payment
+FOR EACH ROW
+BEGIN
+    
+	IF NEW.amount < 0 THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Amount must be a positive value.';
+	END IF;
+    
+    IF (SELECT userType FROM user WHERE userID = NEW.userID) != 'off_campus' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Only off-campus users can purchase membership.';
+    END IF;
+    
+    SET NEW.addDays = FLOOR(NEW.amount / 100) * 365;    
+END//
+
+DROP TRIGGER IF EXISTS member_payment_after_insert;//
+
+-- member_payment after insert
+
+CREATE TRIGGER member_payment_after_insert
+AFTER INSERT ON member_payment
+FOR EACH ROW
+BEGIN
+	UPDATE USER
+    SET
+		MembershipEndDate = CASE
+			WHEN memberStatus = 0 THEN
+				DATE_ADD(CURRENT_DATE, INTERVAL NEW.addDays DAY)
+			ELSE
+				DATE_ADD(MembershipEndDate, INTERVAL NEW.addDays Day)
+		END,
+        memberStatus = 1
+	WHERE userID = NEW.userID;
+    
+    UPDATE user
+    SET maxBorrow = 15
+        WHERE userID = NEW.userID;
+    
+END//
+
+DELIMITER ;
