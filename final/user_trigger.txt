@@ -1,0 +1,46 @@
+-- user trigger
+DROP TRIGGER IF EXISTS user_before_insert;
+DELIMITER //
+
+-- user before insert
+    
+CREATE TRIGGER user_before_insert
+BEFORE INSERT ON user
+FOR EACH ROW
+BEGIN
+	SET NEW.numBorrow = 0;
+    SET NEW.userStatus = 'available';
+    SET NEW.MembershipEndDate = NULL;
+    SET NEW.fine = 0;
+    
+    IF NEW.userType = 'faculty' THEN
+		SET NEW.maxBorrow = 30;
+	ELSEIF NEW.userType = 'staff' THEN
+		SET NEW.maxBorrow = 10;
+	ELSEIF NEW.userType = 'off_campus' THEN
+		SET NEW.maxBorrow = 0;
+	else
+		SET NEW.maxBorrow = 15;
+	END IF;
+    
+    IF NEW.userType = 'off_campus' THEN
+		SET NEW.memberStatus = 0;
+	else
+		SET NEW.memberStatus = NULL;
+	END IF;
+END//
+
+DROP TRIGGER IF EXISTS user_before_delete;//
+
+CREATE TRIGGER user_before_delete
+BEFORE DELETE ON user
+FOR EACH ROW
+BEGIN
+	IF OLD.fine > 0 THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot delete user with unpaid fines.';
+	END IF;
+END;
+	
+
+// DELIMITER ;

@@ -1,0 +1,94 @@
+-- fine
+
+DELIMITER //
+
+DROP TRIGGER IF EXISTS fine_before_insert;//
+
+CREATE TRIGGER fine_before_insert
+BEFORE INSERT ON fine
+FOR EACH ROW
+BEGIN
+    SET NEW.paymentStatus = 'unpaid';
+    SET NEW.processStatus = 'unprocessed';
+    
+    IF NEW.reason = 'Broken' THEN
+        -- read the price of book and set the amount of fine
+        SET NEW.amount = (SELECT a.price * 2 + 30
+                          FROM asset a
+                          JOIN borrow b ON b.assetID = a.assetID
+                          WHERE b.borrowID = NEW.borrowID LIMIT 1);
+		SET NEW.userID = (SELECT b.userID
+						  FROM borrow b
+                          WHERE b.borrowID = NEW.borrowID LIMIT 1);
+        SET NEW.assetID = (SELECT b.assetID
+                           FROM borrow b
+                           WHERE b.borrowID = NEW.borrowID LIMIT 1);
+                          
+		UPDATE asset
+        SET 
+        totalNum = totalNum - 1,
+        remainNum = remainNum -1
+        WHERE assetID = NEW.assetID;
+    END IF;
+		
+END//
+
+DELIMITER ;
+
+DELIMITER //
+
+DROP TRIGGER IF EXISTS fine_after_insert//
+
+CREATE TRIGGER fine_after_insert
+AFTER INSERT ON fine
+FOR EACH ROW
+BEGIN
+    -- update the fine of user
+    UPDATE user
+    SET fine = (SELECT SUM(amount) FROM fine WHERE userID = NEW.userID AND paymentStatus = 'unpaid'),
+    userStatus = 'unavailable'
+    WHERE userID = NEW.userID;
+END//
+
+DELIMITER ;
+DELIMITER //
+
+DROP TRIGGER IF EXISTS fine_after_update//
+
+CREATE TRIGGER fine_after_update
+AFTER UPDATE ON fine
+FOR EACH ROW
+BEGIN
+	-- check all the fine record
+    IF NEW.paymentStatus = 'paid' AND NEW.reason = 'Overduefine' THEN
+        -- update the return time in the borrow table
+        UPDATE borrow
+        SET returnTime = CURRENT_TIMESTAMP
+        WHERE borrowID = NEW.borrowID;
+    END IF;
+
+    -- update the user's total amount of fine
+    UPDATE user
+    SET fine = (
+        SELECT IFNULL(SUM(amount), 0)
+        FROM fine
+        WHERE userID = NEW.userID AND paymentStatus = 'unpaid'
+    )
+    WHERE userID = NEW.userID;
+
+    -- update the user status
+    UPDATE user
+    SET userStatus = (
+        SELECT CASE
+            WHEN EXISTS (
+                SELECT 1
+                FROM fine
+                WHERE userID = NEW.userID AND paymentStatus = 'unpaid'
+            ) THEN 'unavailable'
+            ELSE 'available'
+        END
+    )
+    WHERE userID = NEW.userID;
+END//
+
+DELIMITER ;

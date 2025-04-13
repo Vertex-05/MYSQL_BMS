@@ -1,0 +1,181 @@
+-- Insert students
+INSERT INTO user (userID, firstname, lastname, gender, password, DateofBirth, email, phone, StreetNo, City, State, userType, program)
+VALUES
+('U001', 'Charlie', 'Brown', 'Male', 'pass789', '1995-09-14', 'charlie.brown@example.com', '1122334455', '103', 'CityC', 'StateC', 'student', 'CYS'),
+('U002', 'Sophia', 'Green', 'Female', 'pass111', '2002-07-19', 'sophia.green@example.com', '7788996655', '104', 'CityD', 'StateD', 'student', 'CST'),
+('U003', 'Liam', 'Johnson', 'Male', 'pass222', '1997-02-10', 'liam.johnson@example.com', '6677889900', '105', 'CityE', 'StateE', 'student', 'ECE'),
+('U007', 'Lucas', 'Scott', 'Male', 'pass666', '1998-01-23', 'lucas.scott@example.com', '6677889911', '109', 'CityI', 'StateI', 'student', 'CYS'),
+('U010', 'Isabella', 'Brown', 'Female', 'pass999', '2003-04-18', 'isabella.brown@example.com', '9988774455', '112', 'CityL', 'StateL', 'student', 'SWE');
+
+-- Insert faculty
+INSERT INTO user (userID, firstname, lastname, gender, password, DateofBirth, email, phone, StreetNo, City, State, userType, position)
+VALUES
+('U011', 'William', 'Smith', 'Male', 'pass101', '1985-05-12', 'william.smith@example.com', '1234567890', '113', 'CityM', 'StateM', 'faculty', 'Lecturer'),
+('U012', 'Olivia', 'Jones', 'Female', 'pass102', '1980-11-21', 'olivia.jones@example.com', '3344556677', '114', 'CityN', 'StateN', 'faculty', 'Professor'),
+('U013', 'James', 'Taylor', 'Male', 'pass103', '1978-07-10', 'james.taylor@example.com', '5566778899', '115', 'CityO', 'StateO', 'faculty', 'Assistant Professor'),
+('U014', 'Charlotte', 'White', 'Female', 'pass104', '1990-03-15', 'charlotte.white@example.com', '6677889900', '116', 'CityP', 'StateP', 'faculty', 'Dean'),
+('U018', 'Emily', 'Martin', 'Female', 'pass108', '1988-12-03', 'emily.martin@example.com', '2233445566', '120', 'CityT', 'StateT', 'faculty', 'Researcher');
+
+-- Insert staff
+INSERT INTO user (userID, firstname, lastname, gender, password, DateofBirth, email, phone, StreetNo, City, State, userType, department)
+VALUES
+('U019', 'Michael', 'Miller', 'Male', 'pass201', '1982-05-10', 'michael.miller@example.com', '7788992233', '121', 'CityU', 'StateU', 'staff', 'Admission'),
+('U020', 'Ella', 'Davis', 'Female', 'pass202', '1983-03-18', 'ella.davis@example.com', '3344556677', '122', 'CityV', 'StateV', 'staff', 'Finance'),
+('U021', 'Jack', 'Clark', 'Male', 'pass203', '1991-11-30', 'jack.clark@example.com', '4455667788', '123', 'CityW', 'StateW', 'staff', 'IT'),
+('U022', 'Aria', 'Hill', 'Female', 'pass204', '1985-07-29', 'aria.hill@example.com', '5566778899', '124', 'CityX', 'StateX', 'staff', 'HR'),
+('U024', 'Harper', 'Allen', 'Female', 'pass206', '1986-09-14', 'harper.allen@example.com', '7788991122', '126', 'CityZ', 'StateZ', 'staff', 'Operations');
+
+-- Insert off-campus users
+INSERT INTO user (userID, firstname, lastname, gender, password, DateofBirth, email, phone, StreetNo, City, State, userType)
+VALUES
+('U025', 'Logan', 'Young', 'Male', 'pass301', '1993-01-09', 'logan.young@example.com', '9988775544', '127', 'CityAA', 'StateAA', 'off_campus'),
+('U026', 'Zoe', 'King', 'Female', 'pass302', '1997-04-22', 'zoe.king@example.com', '6677889911', '128', 'CityBB', 'StateBB', 'off_campus'),
+('U027', 'Henry', 'Wright', 'Male', 'pass303', '1995-06-18', 'henry.wright@example.com', '7788992233', '129', 'CityCC', 'StateCC', 'off_campus'),
+('U028', 'Lily', 'Baker', 'Female', 'pass304', '1992-08-12', 'lily.baker@example.com', '5566778899', '130', 'CityDD', 'StateDD', 'off_campus'),
+('U029', 'Alexander', 'Green', 'Male', 'pass305', '1994-05-25', 'alex.green@example.com', '9988774455', '131', 'CityEE', 'StateEE', 'off_campus');
+
+
+-- Insert physical assets
+INSERT INTO asset (assetID, assetName, author, publishTime, assetType, publisherID, subjects, locationID, physicalType, ISBN, totalNum, price)
+VALUES
+('A001', 'Database Systems', 'Elmasri', 2020, 'physical', 'P001', 'CS', 'L001', 'book', '9780136086208', 10, 22.5),
+('A002', 'Python Programming', 'Mark Lutz', 2019, 'physical', 'P002', 'Programming', 'L002', 'book', '9781449355739', 7, 33.4),
+('A003', 'Networking Basics', 'Kurose', 2018, 'physical', 'P001', 'Networking', 'L003', 'book', '9780133594140', 5, 66.7),
+('A004', 'Computer Architecture', 'Hennessy', 2016, 'physical', 'P004', 'Hardware', 'L004', 'book', '9780123838728', 8, 45.5),
+('A005', 'Discrete Mathematics', 'Rosen', 2021, 'physical', 'P005', 'Math', 'L005', 'book', '9780321335722', 6, 39.9),
+('A006', 'Linear Algebra', 'Gilbert Strang', 2017, 'physical', 'P006', 'Math', 'L006', 'book', '9780980232776', 12, 50.0),
+('A007', 'Operating Systems', 'Silberschatz', 2018, 'physical', 'P007', 'CS', 'L007', 'book', '9781119456339', 10, 60.3),
+('A008', 'Clean Code', 'Robert C. Martin', 2008, 'physical', 'P008', 'Programming', 'L008', 'book', '9780132350884', 5, 28.9),
+('A009', 'Cybersecurity Principles', 'Whitman', 2019, 'physical', 'P009', 'Security', 'L009', 'book', '9781284116458', 7, 35.2),
+('A010', 'Data Science Handbook', 'Field Cady', 2017, 'physical', 'P010', 'Data Science', 'L010', 'book', '9781119446188', 4, 42.0);
+
+-- Insert digital assets
+INSERT INTO asset (assetID, assetName, author, publishTime, assetType, publisherID, subjects, ISBN, digitalType, URL)
+VALUES
+('A011', 'AI: A Modern Approach', 'Russell', 2021, 'digital', 'P003', 'AI', '9780136042594', 'magazine', 'https://www.example-ai.com'),
+('A012', 'Deep Learning', 'Goodfellow', 2016, 'digital', 'P011', 'AI', '9780262035613', 'book', 'https://www.example-deeplearning.com'),
+('A013', 'Blockchain Revolution', 'Tapscott', 2020, 'digital', 'P012', 'Blockchain', '9781101980132', 'book', 'https://www.example-blockchain.com'),
+('A014', 'Cloud Computing Basics', 'Smith', 2019, 'digital', 'P013', 'Cloud', '9781119786194', 'magazine', 'https://www.example-cloud.com'),
+('A015', 'JavaScript: The Good Parts', 'Douglas Crockford', 2008, 'digital', 'P014', 'Programming', '9780596517748', 'book', 'https://www.example-js.com'),
+('A016', 'Digital Marketing Strategies', 'Chaffey', 2021, 'digital', 'P015', 'Marketing', '9781292241579', 'magazine', 'https://www.example-digitalmarketing.com'),
+('A017', 'Big Data Analytics', 'Foster', 2018, 'digital', 'P016', 'Data Science', '9781491972922', 'book', 'https://www.example-bigdata.com'),
+('A018', 'Game Development Essentials', 'Novak', 2020, 'digital', 'P017', 'Gaming', '9781337620079', 'magazine', 'https://www.example-gamedev.com'),
+('A019', 'Quantum Computing', 'Nielsen', 2019, 'digital', 'P018', 'Quantum', '9781107002177', 'book', 'https://www.example-quantum.com'),
+('A020', 'Mobile App Development', 'Murach', 2022, 'digital', 'P019', 'Mobile', '9781943872786', 'magazine', 'https://www.example-mobileapp.com');
+
+
+INSERT INTO publisher (publisherID, publisherName, establishedTime, publishNum, publishPhone)
+VALUES
+('P001', 'Pearson', 1990, 200, '1234567890'),
+('P002', 'O\'Reilly Media', 1985, 300, '0987654321'),
+('P003', 'Springer', 2000, 500, '1122334455'),
+('P004', 'Wiley', 1995, 400, '2233445566'),
+('P005', 'Cambridge University Press', 1980, 350, '3344556677'),
+('P006', 'Oxford University Press', 1975, 600, '4455667788'),
+('P007', 'MIT Press', 1998, 250, '5566778899'),
+('P008', 'McGraw-Hill', 1992, 450, '6677889900'),
+('P009', 'Elsevier', 2005, 700, '7788990011'),
+('P010', 'CRC Press', 2010, 150, '8899001122'),
+('P011', 'Taylor & Francis', 1988, 180, '9988776655'),
+('P012', 'SAGE Publications', 1993, 320, '8877665544'),
+('P013', 'Palgrave Macmillan', 2001, 275, '7766554433'),
+('P014', 'Thomson Reuters', 1997, 500, '6655443322'),
+('P015', 'Cengage Learning', 2003, 420, '5544332211'),
+('P016', 'Hachette Livre', 1982, 310, '4433221100'),
+('P017', 'HarperCollins', 1986, 370, '3322110099'),
+('P018', 'Simon & Schuster', 1994, 290, '2211009988'),
+('P019', 'Macmillan Publishers', 1978, 610, '1100998877'),
+('P020', 'Random House', 1980, 450, '0099887766');
+
+
+INSERT INTO location (locationID, floorID, sectionID, shelfID)
+VALUES
+('L001', 'F1', 'S1', 'SH1'),
+('L002', 'F2', 'S2', 'SH2'),
+('L003', 'F3', 'S3', 'SH3'),
+('L004', 'F1', 'S2', 'SH4'),
+('L005', 'F2', 'S3', 'SH5'),
+('L006', 'F3', 'S1', 'SH6'),
+('L007', 'F1', 'S3', 'SH7'),
+('L008', 'F2', 'S1', 'SH8'),
+('L009', 'F3', 'S2', 'SH9'),
+('L010', 'F4', 'S4', 'SH10');
+
+SELECT * FROM user;
+SELECT * FROM asset;
+SELECT * FROM borrow;
+SELECT * FROM fine;
+SELECT * FROM location;
+SELECT * FROM publisher;
+SELECT * FROM member_payment;
+SELECT * FROM event_log;
+
+SHOW TRIGGERS;
+SHOW EVENTS;
+
+-- 经过验证的插入命令
+
+-- membership
+-- staff
+INSERT INTO member_payment (userID, amount, paymentWay)
+VALUES ('U019', 150, 'credit card');
+
+-- off-campus
+INSERT INTO member_payment (userID, amount, paymentWay)
+VALUES ('U025', 200, 'debit card');
+INSERT INTO member_payment (userID, amount, paymentWay)
+VALUES ('U026', 200, 'paypal');
+INSERT INTO member_payment (userID, amount, paymentWay)
+VALUES ('U027', 300, 'credit card');
+INSERT INTO member_payment (userID, amount, paymentWay)
+VALUES ('U028', 100, 'debit card');
+INSERT INTO member_payment (userID, amount, paymentWay)
+VALUES ('U028', 200, 'paypal');
+INSERT INTO member_payment (userID, amount, paymentWay)
+VALUES ('U027', 200, 'credit card');
+INSERT INTO member_payment (userID, amount, paymentWay)
+VALUES ('U026', 100, 'debit card');
+INSERT INTO member_payment (userID, amount, paymentWay)
+VALUES ('U025', 300, 'paypal');
+INSERT INTO member_payment (userID, amount, paymentWay)
+VALUES ('U012', 230, 'credit card');
+
+-- insert borrow
+INSERT INTO borrow (userID, assetID) VALUES ('U002', 'A003');
+INSERT INTO borrow (userID, assetID) VALUES ('U003', 'A004');
+INSERT INTO borrow (userID, assetID) VALUES ('U019', 'A005');
+INSERT INTO borrow (userID, assetID) VALUES ('U020', 'A006');
+INSERT INTO borrow (userID, assetID) VALUES ('U025', 'A007');
+INSERT INTO borrow (userID, assetID) VALUES ('U007', 'A008');
+INSERT INTO borrow (userID, assetID) VALUES ('U026', 'A009');
+INSERT INTO borrow (userID, assetID) VALUES ('U012', 'A010');
+INSERT INTO borrow (userID, assetID) VALUES ('U010', 'A001');
+INSERT INTO borrow (userID, assetID) VALUES ('U028', 'A002');
+
+
+-- return book (normal)
+UPDATE borrow
+SET returnTime = CURRENT_TIMESTAMP
+WHERE borrowID = 8;
+
+-- return book (overdue)
+	-- once the fine was paid, return the book automatically
+UPDATE fine
+SET paymentStatus = 'paid'
+WHERE paymentID = 14;
+    
+    
+-- no matter pay what kind of fine, the book will be return automatically
+-- set broken fine
+INSERT INTO fine (borrowID, reason)
+VALUES
+(9, 'Broken');
+
+-- pay broken fine
+UPDATE fine
+SET paymentStatus = 'paid'
+WHERE paymentID = 13;
+
+
+
+
